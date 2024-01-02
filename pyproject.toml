@@ -1,6 +1,6 @@
 [project]
 name = "CosmoDocs"
-version = "0.1.0"
+version = "0.1.1"
 description = "A generator for python files docstrings"
 authors = [
     {name = "Thiago Santa Clara", email = "strovsk@outlook.com"},
