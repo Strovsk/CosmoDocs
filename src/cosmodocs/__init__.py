@@ -28,17 +28,18 @@ class CosmosDocsInfo(TypedDict):
 
 
 class CosmosDocs:
-    def __init__(self, file_path: str) -> None:
+    def __init__(self, file_path: str, encodig: str = None) -> None:
         self.file_path = os.path.abspath(file_path)
         if not os.path.isfile(self.file_path):
             raise FileNotFoundError(f"File not found: {self.file_path}")
 
         self.content = self.load_content()
+        self.file_encoding = encodig
         self.tree = ast.parse(self.content)
         self.file_info: CosmosDocsInfo = self.load_file_symbols()
 
     def load_content(self) -> str:
-        with open(self.file_path, "r") as file:
+        with open(self.file_path, "r", encoding=self.file_encoding) as file:
             self.content = file.read()
         return self.content
 
