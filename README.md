@@ -1,7 +1,7 @@
 # Cosmo Docs
 
 <p align="center">
-  <img src="docs/image/Cosmo Docs Logo.png" />
+  <img src="https://raw.githubusercontent.com/Strovsk/CosmoDocs/main/docs/image/Cosmo%20Docs%20Logo.png" />
 </p>
 
 Cosmo Docs is a powerful package that serves as a parser for describing functions and classes in a Python script. It provides detailed information about functions and classes, and can generate the information in markdown format. This makes it easy to document and share code documentation in a standardized and readable format.
