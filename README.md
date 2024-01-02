@@ -2,7 +2,6 @@
 
 <p align="center">
   <img src="docs/image/Cosmo Docs Logo.png" />
-  <img src="" />
 </p>
 
 Cosmo Docs is a powerful package that serves as a parser for describing functions and classes in a Python script. It provides detailed information about functions and classes, and can generate the information in markdown format. This makes it easy to document and share code documentation in a standardized and readable format.
@@ -39,3 +38,5 @@ print(cosmos.file_info)
 # to get the file information in markdown format
 print(cosmos.markdown)
 ```
+
+> Note: You can create your own formats from `comos.file_info` dict.
