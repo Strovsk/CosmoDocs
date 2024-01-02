@@ -33,8 +33,8 @@ class CosmosDocs:
         if not os.path.isfile(self.file_path):
             raise FileNotFoundError(f"File not found: {self.file_path}")
 
-        self.content = self.load_content()
         self.file_encoding = encodig
+        self.content = self.load_content()
         self.tree = ast.parse(self.content)
         self.file_info: CosmosDocsInfo = self.load_file_symbols()
 
