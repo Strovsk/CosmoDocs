@@ -61,7 +61,10 @@ class CosmosDocs:
         def get_function_args(node: ast.FunctionDef) -> list[FunctionArg]:
             args = []
             for arg in node.args.args:
-                arg_type = None if arg.annotation is None else arg.annotation.id
+                try:
+                    arg_type = arg.annotation.id
+                except AttributeError:
+                    arg_type = None
                 args.append(
                     {
                         "name": arg.arg,
