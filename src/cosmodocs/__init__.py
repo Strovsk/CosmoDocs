@@ -78,7 +78,14 @@ class CosmosDocs:
                 default_index = (index + 1) * -1
                 default = node.args.defaults[default_index]
 
-                args[default_index]["default"] = default.value
+                if type(default) is ast.Dict:
+                    dict_default = {}
+                    for key, value in zip(default.keys, default.values):
+                        dict_default[key] = value
+                    args[default_index]["default"] = dict_default
+                    args[default_index]["type"] = "dict"
+                else:
+                    args[default_index]["default"] = default.value
                 if args[default_index]["type"] is None:
                     args[default_index]["type"] = type(default.value).__name__
             return args
