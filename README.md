@@ -24,7 +24,7 @@ pip install cosmo-docs
 
 ## Usage
 
-To use Cosmo Docs, import the `cosmo_docs` module and call the `generate_docs` function. The `generate_docs` function takes in a Python script as input and returns a string containing the documentation in markdown format.
+To use Cosmo Docs, import the `CosmoDocs` class from `cosmo_docs` module.
 
 ```python
 from cosmo_docs import CosmoDocs
