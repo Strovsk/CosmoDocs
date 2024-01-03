@@ -1,4 +1,10 @@
-from typing import TypedDict
+from typing import TypedDict, Optional
+
+
+class InjectedClass:
+    def __init__(self, number: int, string: str) -> None:
+        self.number = number
+        self.string = string
 
 
 class GenericClass:
@@ -9,6 +15,11 @@ class GenericClass:
     const_string = "const string"
     defined_number = 54
     const_number: int
+    const_number_2: Optional[int] = 3
+    const_number_3: Optional[int]
+    matrix: list[list[int]]
+    injected_obj = InjectedClass(1, "string")
+    a = b = 1
 
     def __init__(self) -> None:
         """

@@ -125,22 +125,27 @@ class CosmosDocs:
     def get_class_constants(self, node: ast.ClassDef) -> list[FunctionArg]:
         class_constants = []
         for child_node in node.body:
-            if (
-                type(child_node) is ast.Assign
-                and type(child_node.value) is ast.Constant
-            ):
+            if type(child_node) is ast.Assign:
+                child_node_value = ast.get_source_segment(
+                    self.content, child_node.value
+                )
+                child_node_type = getattr(child_node, "annotation", None)
+                child_node_type = ast.get_source_segment(self.content, child_node_type)
+
                 class_constants.append(
                     {
-                        "name": child_node.targets[0].id,
-                        "type": type(child_node.value.value).__name__,
-                        "default": child_node.value.value,
+                        "name": ", ".join([target.id for target in child_node.targets]),
+                        "type": child_node_type,
+                        "default": child_node_value,
                     }
                 )
             elif type(child_node) is ast.AnnAssign:
                 class_constants.append(
                     {
                         "name": child_node.target.id,
-                        "type": child_node.annotation.id,
+                        "type": ast.get_source_segment(
+                            self.content, child_node.annotation
+                        ),
                         "default": None,
                     }
                 )
