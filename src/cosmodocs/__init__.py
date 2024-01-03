@@ -175,6 +175,8 @@ class CosmosDocs:
                 values=[f.values() for f in class_info["class_variables"]],
             )
 
+            markdown_result += "\n"
+            markdown_result += self.markdown_title(header_size + 1, "Methods")
             for method_info in class_info["methods"]:
                 markdown_result += self.markdown_title(
                     header_size + 1, method_info["name"]
