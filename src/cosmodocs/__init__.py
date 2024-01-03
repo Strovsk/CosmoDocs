@@ -66,7 +66,7 @@ class CosmosDocs:
             arg_type = None
         return arg_type
 
-    def get_function_info(self, node: ast.FunctionDef) -> FunctionInfo:
+    def get_function_info(self, node: ast.FunctionDef, is_method=False) -> FunctionInfo:
         def get_function_args(node: ast.FunctionDef) -> list[FunctionArg]:
             args = []
             for arg in node.args.args:
@@ -100,9 +100,15 @@ class CosmosDocs:
         except AttributeError:
             function_return_type = None
 
+        no_docstring_message = (
+            "No Description for this method."
+            if is_method
+            else "No Description for this function."
+        )
+
         return {
             "name": node.name,
-            "docstring": ast.get_docstring(node) or "No Description for this function.",
+            "docstring": ast.get_docstring(node) or no_docstring_message,
             "args": get_function_args(node),
             "return_type": function_return_type,
         }
@@ -183,6 +189,12 @@ class CosmosDocs:
                 markdown_result += "\n"
                 markdown_result += self.markdown_title(header_size + 2, "Return")
                 markdown_result += f"- **{method_info['return_type']}**\n\n"
+
+            markdown_result += self.markdown_title(header_size + 1, "Class Variables")
+            markdown_result += self.markdown_table(
+                ["Name", "Type", "Default"],
+                [f.values() for f in class_info["class_variables"]],
+            )
 
         for function_info in self.file_info["functions"]:
             markdown_result += f"# {function_info['name']}\n\n"
