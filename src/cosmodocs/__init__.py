@@ -19,6 +19,7 @@ class ClassInfo(TypedDict):
     name: str
     docstring: str
     methods: list[FunctionInfo]
+    class_variables: list[FunctionArg]
 
 
 class CosmosDocsInfo(TypedDict):
@@ -101,7 +102,7 @@ class CosmosDocs:
 
         return {
             "name": node.name,
-            "docstring": ast.get_docstring(node),
+            "docstring": ast.get_docstring(node) or "No Description for this function.",
             "args": get_function_args(node),
             "return_type": function_return_type,
         }
@@ -116,35 +117,103 @@ class CosmosDocs:
 
         return {
             "name": node.name,
-            "docstring": ast.get_docstring(node),
+            "docstring": ast.get_docstring(node) or "No Description for this class.",
             "methods": get_class_methods(node.body),
+            "class_variables": self.get_class_constants(node),
         }
 
-    @property
-    def markdown(self) -> str:
-        markdown_result = ""
+    def get_class_constants(self, node: ast.ClassDef) -> list[FunctionArg]:
+        class_constants = []
+        for child_node in node.body:
+            if (
+                type(child_node) is ast.Assign
+                and type(child_node.value) is ast.Constant
+            ):
+                class_constants.append(
+                    {
+                        "name": child_node.targets[0].id,
+                        "type": type(child_node.value.value).__name__,
+                        "default": child_node.value.value,
+                    }
+                )
+            elif type(child_node) is ast.AnnAssign:
+                class_constants.append(
+                    {
+                        "name": child_node.target.id,
+                        "type": child_node.annotation.id,
+                        "default": None,
+                    }
+                )
+        return class_constants
+
+    def markdown(self, title: str = "") -> str:
+        if not title:
+            header_size = 1
+            markdown_result = ""
+        else:
+            header_size = 2
+            markdown_result = self.markdown_title(1, title)
 
         for class_info in self.file_info["classes"]:
-            markdown_result += f"# {class_info['name']}\n\n"
+            markdown_result += self.markdown_title(header_size, class_info["name"])
             markdown_result += f"{class_info['docstring']}\n\n"
+
+            markdown_result += self.markdown_title(header_size + 1, "Class Variables")
+            markdown_result += self.markdown_table(
+                columns=["Name", "Type", "Default"],
+                values=[f.values() for f in class_info["class_variables"]],
+            )
+
             for method_info in class_info["methods"]:
-                markdown_result += f"## {method_info['name']}\n\n"
+                markdown_result += self.markdown_title(
+                    header_size + 1, method_info["name"]
+                )
                 markdown_result += f"{method_info['docstring']}\n\n"
-                markdown_result += "### Arguments\n\n"
-                for arg in method_info["args"]:
-                    markdown_result += f"- **{arg['name']}** (*{arg['type']}*): "
-                    markdown_result += f"{arg['default']}\n"
+
+                markdown_result += self.markdown_title(header_size + 2, "Arguments")
+                markdown_result += self.markdown_table(
+                    columns=["Name", "Type", "Default"],
+                    values=[f.values() for f in method_info["args"]],
+                )
                 markdown_result += "\n"
-                markdown_result += "### Return\n\n"
+                markdown_result += self.markdown_title(header_size + 2, "Return")
                 markdown_result += f"- **{method_info['return_type']}**\n\n"
+
         for function_info in self.file_info["functions"]:
             markdown_result += f"# {function_info['name']}\n\n"
             markdown_result += f"{function_info['docstring']}\n\n"
-            markdown_result += "### Arguments\n\n"
-            for arg in function_info["args"]:
-                markdown_result += f"- **{arg['name']}** (*{arg['type']}*): "
-                markdown_result += f"{arg['default']}\n"
+
+            markdown_result += self.markdown_title(2, "Arguments")
+
+            markdown_result += self.markdown_table(
+                columns=["Name", "Type", "Default"],
+                values=[f.values() for f in function_info["args"]],
+            )
+
             markdown_result += "\n"
-            markdown_result += "### Return\n\n"
+            markdown_result += self.markdown_title(2, "Return")
             markdown_result += f"- **{function_info['return_type']}**\n\n"
+        return markdown_result
+
+    def markdown_table(self, columns: list[str] = [], values: list[list[str]] = []):
+        markdown_result = "|"
+
+        for column in columns:
+            markdown_result += f" {column} |"
+        markdown_result += "\n|"
+
+        for _ in columns:
+            markdown_result += " --- |"
+
+        for value in values:
+            markdown_result += "\n|"
+            for item in value:
+                markdown_result += f" {item} |"
+        markdown_result += "\n"
+
+        return markdown_result
+
+    def markdown_title(self, size: int, text: str):
+        markdown_result = ""
+        markdown_result += f"{'#' * size} {text}\n\n"
         return markdown_result

@@ -58,3 +58,33 @@ def test_get_right_class_info():
 def test_get_markdown_format():
     cosmos = CosmosDocs("tests/data/sample_file.py")
     assert type(cosmos.markdown) is str
+
+
+def test_get_class_constant():
+    cosmos = CosmosDocs("tests/data/sample_file.py")
+    class_info = cosmos.get_class_info(cosmos.tree.body[1])
+    assert class_info["class_variables"] == [
+        {"name": "const_string", "type": "str", "default": "const string"},
+        {"name": "defined_number", "type": "int", "default": 54},
+        {"name": "const_number", "type": "int", "default": None},
+    ]
+
+
+def test_should_convert_right_markdown_table():
+    cosmos = CosmosDocs("tests/data/sample_file.py")
+    markdown_table = cosmos.markdown_table(
+        ["Name", "Type", "Default"],
+        [
+            ["number", "int", None],
+            ["string_a", "str", "my default value"],
+            ["string_b", "str", "my another deafault value"],
+        ],
+    )
+
+    assert markdown_table == (
+        "| Name | Type | Default |\n"
+        "| --- | --- | --- |\n"
+        "| number | int | None |\n"
+        "| string_a | str | my default value |\n"
+        "| string_b | str | my another deafault value |\n"
+    )

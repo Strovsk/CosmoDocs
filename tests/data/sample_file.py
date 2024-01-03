@@ -6,6 +6,10 @@ class GenericClass:
     A basic class that has two fields, `classString` and `classNumber`, and a constructor method that initializes these fields.
     """  # noqa
 
+    const_string = "const string"
+    defined_number = 54
+    const_number: int
+
     def __init__(self) -> None:
         """
         Initializes the `classString` field with a default value of "classString" and the `classNumber` field with a default value of 1.
