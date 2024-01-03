@@ -163,7 +163,7 @@ class CosmosDocs:
             markdown_result = ""
         else:
             header_size = start_from + 1
-            markdown_result = self.markdown_title(1, title)
+            markdown_result = self.markdown_title(start_from, title)
 
         for class_info in self.file_info["classes"]:
             markdown_result += self.markdown_title(header_size, class_info["name"])
