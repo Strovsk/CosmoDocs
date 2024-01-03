@@ -118,7 +118,7 @@ class CosmosDocs:
             methods = []
             for child_node in class_methods:
                 if isinstance(child_node, ast.FunctionDef):
-                    methods.append(self.get_function_info(child_node))
+                    methods.append(self.get_function_info(child_node, True))
             return methods
 
         return {
@@ -177,6 +177,8 @@ class CosmosDocs:
 
             markdown_result += "\n"
             markdown_result += self.markdown_title(header_size + 1, "Methods")
+            if len(class_info["methods"]) == 0:
+                markdown_result += "No methods for this class.\n\n"
             for method_info in class_info["methods"]:
                 markdown_result += self.markdown_title(
                     header_size + 1, method_info["name"]
@@ -191,12 +193,6 @@ class CosmosDocs:
                 markdown_result += "\n"
                 markdown_result += self.markdown_title(header_size + 2, "Return")
                 markdown_result += f"- **{method_info['return_type']}**\n\n"
-
-            markdown_result += self.markdown_title(header_size + 1, "Class Variables")
-            markdown_result += self.markdown_table(
-                ["Name", "Type", "Default"],
-                [f.values() for f in class_info["class_variables"]],
-            )
 
         for function_info in self.file_info["functions"]:
             markdown_result += f"# {function_info['name']}\n\n"
