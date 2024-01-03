@@ -157,12 +157,12 @@ class CosmosDocs:
                 )
         return class_constants
 
-    def markdown(self, title: str = "") -> str:
+    def markdown(self, title: str = "", start_from: int = 1) -> str:
         if not title:
-            header_size = 1
+            header_size = start_from
             markdown_result = ""
         else:
-            header_size = 2
+            header_size = start_from + 1
             markdown_result = self.markdown_title(1, title)
 
         for class_info in self.file_info["classes"]:
