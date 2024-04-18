@@ -223,7 +223,6 @@ class CosmosDocs:
 
         for value in values:
             markdown_result += "\n|"
-            markdown_result += "\n|"
             for item in value:
                 if not item:
                     item = ""
