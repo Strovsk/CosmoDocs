@@ -1,5 +1,6 @@
 import os
 import ast
+import re
 from typing import TypedDict
 
 
@@ -222,7 +223,15 @@ class CosmosDocs:
 
         for value in values:
             markdown_result += "\n|"
+            markdown_result += "\n|"
             for item in value:
+                if not item:
+                    item = ""
+                item = item.replace("\n", "")
+                item = re.sub(r'"\s+"', "", item)
+                item = re.sub(r"\(\s+", "(", item)
+                item = re.sub(r",\s+\)", ")", item)
+                item = re.sub(r",\s+", ", ", item)
                 markdown_result += f" {item} |"
         markdown_result += "\n"
 
